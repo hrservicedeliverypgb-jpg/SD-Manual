@@ -88,7 +88,7 @@
   }
   const bars = document.getElementById("bars"), xl = document.getElementById("xl");
   data.forEach(([d,h]) => {
-    const pct = h / MAX * 100, inside = pct > 12;
+    const pct = h / MAX * 100, inside = false; // hour labels always sit above the bar, in black, under the yellow day label
     bars.insertAdjacentHTML("beforeend", `<div class="col">
       <div class="dv" style="bottom:calc(${pct}% + ${inside ? 12 : 34}px)">${days(h)}</div>
       <span class="hv ${inside ? "" : "out"}" style="bottom:calc(${pct}% ${inside ? "- 28px" : "+ 8px"})">${fmt(h)}</span>
