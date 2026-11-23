@@ -61,7 +61,7 @@
       </div>
       <div class="legend">
         <span><i class="sw hours"></i>Overtime Hours</span>
-        <span><i class="sw days"></i>Overtime Days (Hours ÷ 8.75)</span>
+        <span><i class="sw days"></i>Average Ratio</span>
       </div>
     </header>
     <div class="chart">
@@ -72,24 +72,25 @@
   </div>
 </div>
 <script>
-  const HOURS_PER_DAY = 8.75, MAX = 400;
+  const MAX = 14500;
+  // [department, OT hours, average ratio]
   const data = [
-    ["PMD",353.13],["EMD",115.38],["TS",90.72],["RED",215.77],["HRD",58.97],["ITD",27.71],
-    ["EXE",37.87],["SCM",35.57],["S&M",5.15],["FAD",4.17],["LMD",1.63]
+    ["PMD",12359.50,353.13],["EMD",2076.85,115.38],["TS",453.58,90.72],["RED",431.54,215.77],
+    ["HRD",117.94,58.97],["ITD",55.42,27.71],["EXE",37.87,37.87],["SCM",35.57,35.57],
+    ["S&M",5.15,5.15],["FAD",4.17,4.17],["LMD",1.63,1.63]
   ];
   const fmt = n => n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
-  const days = h => fmt(h / HOURS_PER_DAY);
 
   const grid = document.getElementById("grid");
-  for (let v = 0; v <= MAX; v += 50) {
+  for (let v = 0; v <= MAX; v += 2000) {
     grid.insertAdjacentHTML("beforeend",
       `<div class="gl" style="bottom:${v/MAX*100}%"><b>${v.toLocaleString()}</b></div>`);
   }
   const bars = document.getElementById("bars"), xl = document.getElementById("xl");
-  data.forEach(([d,h]) => {
-    const pct = h / MAX * 100, inside = false; // hour labels always sit above the bar, in black, under the yellow day label
+  data.forEach(([d,h,avg]) => {
+    const pct = h / MAX * 100, inside = false; // OT hours in black above the bar, average ratio in yellow on top
     bars.insertAdjacentHTML("beforeend", `<div class="col">
-      <div class="dv" style="bottom:calc(${pct}% + ${inside ? 12 : 34}px)">${days(h)}</div>
+      <div class="dv" style="bottom:calc(${pct}% + ${inside ? 12 : 34}px)">${fmt(avg)}</div>
       <span class="hv ${inside ? "" : "out"}" style="bottom:calc(${pct}% ${inside ? "- 28px" : "+ 8px"})">${fmt(h)}</span>
       <div class="bar" style="height:${pct}%"></div></div>`);
     xl.insertAdjacentHTML("beforeend", `<div>${d}</div>`);
