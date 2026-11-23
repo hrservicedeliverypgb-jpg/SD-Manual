@@ -72,16 +72,16 @@
   </div>
 </div>
 <script>
-  const HOURS_PER_DAY = 8.75, MAX = 14500;
+  const HOURS_PER_DAY = 8.75, MAX = 400;
   const data = [
-    ["PMD",12359.50],["EMD",2076.85],["TS",453.58],["RED",431.54],["HRD",117.94],["ITD",55.42],
+    ["PMD",353.13],["EMD",115.38],["TS",90.72],["RED",215.77],["HRD",58.97],["ITD",27.71],
     ["EXE",37.87],["SCM",35.57],["S&M",5.15],["FAD",4.17],["LMD",1.63]
   ];
   const fmt = n => n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
   const days = h => fmt(h / HOURS_PER_DAY);
 
   const grid = document.getElementById("grid");
-  for (let v = 0; v <= MAX; v += 2000) {
+  for (let v = 0; v <= MAX; v += 50) {
     grid.insertAdjacentHTML("beforeend",
       `<div class="gl" style="bottom:${v/MAX*100}%"><b>${v.toLocaleString()}</b></div>`);
   }
