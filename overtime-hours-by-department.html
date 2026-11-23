@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overtime by Department</title>
+<style>
+  :root {
+    --bg: #efefef; --ink: #1f1f1f; --muted: #6b6b6b; --grid: #d6d6d6;
+    --hours: #3a3a3a; --days: #fde58a; --days-border: #e0b520; --accent: #d13438;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font-family: "Segoe UI", Arial, Helvetica, sans-serif; }
+  .wrap { width: 1100px; padding: 28px 32px 24px 52px; display: flex; gap: 28px; }
+  .main { flex: 1; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; }
+  h1 { margin: 0; font-size: 30px; white-space: nowrap; font-weight: 900; letter-spacing: .5px; }
+  .sub { color: var(--muted); font-size: 17px; margin-top: 4px; }
+  .legend { font-size: 12.5px; display: grid; gap: 8px; margin-top: 4px; }
+  .legend span { white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+  .sw { width: 26px; height: 13px; border-radius: 3px; display: inline-block; }
+  .sw.hours { background: var(--hours); }
+  .sw.days { background: var(--days); border: 1.5px solid var(--days-border); }
+
+  .chart { position: relative; height: 420px; margin: 30px 0 0 0; }
+  .grid { position: absolute; inset: 0; }
+  .gl { position: absolute; left: 0; right: 0; border-top: 1px solid var(--grid); }
+  .gl b { position: absolute; left: -48px; top: -9px; width: 40px; text-align: right;
+          font-weight: 400; font-size: 13px; color: var(--ink); }
+  .bars { position: absolute; inset: 0 0 0 10px; display: flex; align-items: flex-end; gap: 13px; }
+  .col { flex: 1; height: 100%; position: relative; display: flex; flex-direction: column;
+         justify-content: flex-end; align-items: center; }
+  .bar { width: 100%; background: var(--hours); border-radius: 3px 3px 0 0; min-height: 3px; }
+  .hv { font-size: 12px; font-weight: 700; color: #fff; position: absolute; }
+  .hv.out { color: var(--ink); }
+  .dv { position: absolute; background: var(--days); border: 1.5px solid var(--days-border);
+        border-radius: 5px; padding: 3px 6px; font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+  .dv small { font-weight: 600; font-size: 10.5px; color: #6a5300; margin-left: 2px; }
+  .xl { display: flex; gap: 13px; margin-left: 10px; }
+  .xl div { flex: 1; text-align: center; font-size: 14px; transform: rotate(-40deg);
+            transform-origin: center; margin-top: 18px; }
+
+  aside { width: 175px; border-left: 1px solid #bdbdbd; padding: 70px 0 0 14px;
+          display: grid; gap: 34px; align-content: start; }
+  .kpi .v { font-size: 34px; font-weight: 800; line-height: 1; }
+  .kpi .v.red { color: var(--accent); }
+  .kpi .l { color: var(--muted); font-size: 15px; margin-top: 4px; }
+  .kpi .d { margin-top: 6px; display: inline-block; background: var(--days);
+            border: 1.5px solid var(--days-border); border-radius: 5px;
+            padding: 2px 7px; font-size: 12.5px; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="main">
+    <header>
+      <div>
+        <h1>OVERTIME HOURS BY DEPARTMENT</h1>
+        <div class="sub">Overtime hours accumulated by department</div>
+      </div>
+      <div class="legend">
+        <span><i class="sw hours"></i>Overtime Hours</span>
+        <span><i class="sw days"></i>Overtime Days (Hours ÷ 8.75)</span>
+      </div>
+    </header>
+    <div class="chart">
+      <div class="grid" id="grid"></div>
+      <div class="bars" id="bars"></div>
+    </div>
+    <div class="xl" id="xl"></div>
+  </div>
+  <aside id="kpis"></aside>
+</div>
+<script>
+  const HOURS_PER_DAY = 8.75, MAX = 16000;
+  const data = [
+    ["PMD",12359.50],["EMD",2076.85],["TS",453.58],["RED",431.54],["HRD",117.94],["ITD",55.42],
+    ["EXE",37.87],["SCM",35.57],["S&M",5.15],["FAD",4.17],["LMD",1.63]
+  ];
+  const fmt = n => n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  const days = h => fmt(h / HOURS_PER_DAY);
+
+  const grid = document.getElementById("grid");
+  for (let v = 0; v <= MAX; v += 2000) {
+    grid.insertAdjacentHTML("beforeend",
+      `<div class="gl" style="bottom:${v/MAX*100}%"><b>${v.toLocaleString()}</b></div>`);
+  }
+  const bars = document.getElementById("bars"), xl = document.getElementById("xl");
+  data.forEach(([d,h]) => {
+    const pct = h / MAX * 100, inside = false; // hour labels always sit above the bar, in black, under the yellow day label
+    bars.insertAdjacentHTML("beforeend", `<div class="col">
+      <div class="dv" style="bottom:calc(${pct}% + ${inside ? 12 : 34}px)">${days(h)}</div>
+      <span class="hv ${inside ? "" : "out"}" style="bottom:calc(${pct}% ${inside ? "- 28px" : "+ 8px"})">${fmt(h)}</span>
+      <div class="bar" style="height:${pct}%"></div></div>`);
+    xl.insertAdjacentHTML("beforeend", `<div>${d}</div>`);
+  });
+
+  const total = data.reduce((a,[,h]) => a + h, 0);
+  const kpis = [[fmt(total),"total overtime hours",total,true]];
+  document.getElementById("kpis").innerHTML = kpis.map(([v,l,h,red]) =>
+    `<div class="kpi"><div class="v ${red?"red":""}">${v}</div><div class="l">${l}</div>
+     <div class="d">${days(h)} days</div></div>`).join("");
+</script>
+</body>
+</html>
