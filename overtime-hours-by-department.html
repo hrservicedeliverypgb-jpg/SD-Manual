@@ -70,10 +70,9 @@
     </div>
     <div class="xl" id="xl"></div>
   </div>
-  <aside id="kpis"></aside>
 </div>
 <script>
-  const HOURS_PER_DAY = 8.75, MAX = 16000;
+  const HOURS_PER_DAY = 8.75, MAX = 14500;
   const data = [
     ["PMD",12359.50],["EMD",2076.85],["TS",453.58],["RED",431.54],["HRD",117.94],["ITD",55.42],
     ["EXE",37.87],["SCM",35.57],["S&M",5.15],["FAD",4.17],["LMD",1.63]
@@ -96,11 +95,6 @@
     xl.insertAdjacentHTML("beforeend", `<div>${d}</div>`);
   });
 
-  const total = data.reduce((a,[,h]) => a + h, 0);
-  const kpis = [[fmt(total),"total overtime hours",total,true]];
-  document.getElementById("kpis").innerHTML = kpis.map(([v,l,h,red]) =>
-    `<div class="kpi"><div class="v ${red?"red":""}">${v}</div><div class="l">${l}</div>
-     <div class="d">${days(h)} days</div></div>`).join("");
 </script>
 </body>
 </html>
